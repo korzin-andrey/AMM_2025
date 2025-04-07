@@ -1,1 +1,1 @@
-# AMM_2025
+# This repository contains code for future AMM publication
