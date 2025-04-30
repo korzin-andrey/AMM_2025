@@ -17,7 +17,7 @@ class SEIRModel():
         dRdt = gamma * I
         return dSdt, dEdt, dIdt, dRdt
 
-    def simulate(self, alpha, beta, gamma, init_inf_frac, init_rec_frac, tmax: int):
+    def simulate(self, alpha=1/2, beta=1/7*1.5, gamma=1/7, init_inf_frac=1e-4, init_rec_frac=0.15, tmax: int = 150):
         '''
         alpha: rate of progression from exposed to infectious
         beta: transmission rate
@@ -35,3 +35,4 @@ class SEIRModel():
                                      args=(alpha, beta, gamma)).T * self.population
         self.result = SEIRModelOutput(t, S, E, I, R)
         return self.result
+    
