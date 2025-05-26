@@ -33,45 +33,44 @@ class NaiveErrorModel():
 
     def add_delay(self):
         self.new_indices = [(self.timespace[index] + self.delay_arr[index]) if (self.timespace[index] + self.delay_arr[index]) < self.tmax
-                            else None for index in range(self.tmax)]
+                            else np.nan for index in range(self.tmax)]
 
         dict_incidence = dict()
         for index in range(len(self.incidence_arr)):
             if self.new_indices[index] in dict_incidence.keys():
                 dict_incidence[self.new_indices[index]
                                ] += self.incidence_arr[index]
-            elif self.new_indices[index] is not None:
+            elif self.new_indices[index] is not np.nan:
                 dict_incidence[self.new_indices[index]
                                ] = self.incidence_arr[index]
         dict_incidence = dict(sorted(dict_incidence.items()))
 
-        delayed_incidence = [None for _ in range(self.tmax)]
+        delayed_incidence = [np.nan for _ in range(self.tmax)]
         for key in dict_incidence.keys():
             delayed_incidence[key] = dict_incidence[key]
         # does not work because all incidence data with time index > self.tmax is deleted
-        # assert sum(filter(None, self.incidence_arr)) == sum(filter(None, delayed_incidence))
+        # assert sum(filter(np.nan, self.incidence_arr)) == sum(filter(np.nan, delayed_incidence))
         self.incidence_arr = delayed_incidence
-        
-    
+
     def remove_delay(self):
-        self.new_indices = [(self.timespace[index] - self.delay_arr[index]) if (self.timespace[index] >= self.delay_arr[index]) 
-                            else None for index in range(self.tmax)]
+        self.new_indices = [(self.timespace[index] - self.delay_arr[index]) if (self.timespace[index] >= self.delay_arr[index])
+                            else np.nan for index in range(self.tmax)]
 
         dict_incidence = dict()
         for index in range(len(self.incidence_arr)):
             if self.new_indices[index] in dict_incidence.keys():
                 dict_incidence[self.new_indices[index]
                                ] += self.incidence_arr[index]
-            elif self.new_indices[index] is not None:
+            elif self.new_indices[index] is not np.nan:
                 dict_incidence[self.new_indices[index]
                                ] = self.incidence_arr[index]
         dict_incidence = dict(sorted(dict_incidence.items()))
 
-        delayed_incidence = [None for _ in range(self.tmax)]
+        delayed_incidence = [np.nan for _ in range(self.tmax)]
         for key in dict_incidence.keys():
             delayed_incidence[key] = dict_incidence[key]
         # does not work because all incidence data with time index > self.tmax is deleted
-        # assert sum(filter(None, self.incidence_arr)) == sum(filter(None, delayed_incidence))
+        # assert sum(filter(np.nan, self.incidence_arr)) == sum(filter(np.nan, delayed_incidence))
         self.incidence_arr = delayed_incidence
 
     def add_underreporting(self):
