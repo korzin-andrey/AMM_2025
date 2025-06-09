@@ -1,6 +1,24 @@
 import numpy as np
 
-
+class SEIRParams:
+    def __init__(self, alpha, beta, gamma, init_inf_frac, init_rec_frac, tmax = None):
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = gamma
+        self.init_inf_frac = init_inf_frac
+        self.init_rec_frac = init_rec_frac
+        self.tmax = tmax
+        
+    def __call__(self):
+        params = self.as_list()
+        print('alpha: {}, beta: {}, gamma: {}, init_inf_frac: {}, init_rec_frac: {}'.format(*np.round(params, 2)))
+        return params
+    
+    def as_list(self):
+        return [self.alpha, self.beta, self.gamma, self.init_inf_frac, self.init_rec_frac]
+        
+        
+        
 class SEIRModelOutput:
     '''
     Class for storing output of SEIR model. 
