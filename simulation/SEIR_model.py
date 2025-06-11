@@ -46,7 +46,7 @@ class SEIRModel():
     
     def calibrate(self, time_series):
         '''
-        
+    
         return: SEIRParams object
         '''
         tmax = len(time_series)
