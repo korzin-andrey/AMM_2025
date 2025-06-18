@@ -26,9 +26,9 @@ class SEIRModel():
 
     def simulate(self, alpha=1/2, beta=1/7*1.5, gamma=1/7, init_inf_frac=1e-4, init_rec_frac=0.15, tmax: int = 150):
         '''
-        alpha: rate of progression from exposed to infectious
         beta: transmission rate
-        gamma: recovery rate
+        gamma: rate of progression from exposed to infectious
+        delta: recovery rate
         init_inf_frac: fraction of initially infected
         init_rec_frac: fraction of initially recovered
         '''
