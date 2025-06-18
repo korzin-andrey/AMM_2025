@@ -41,7 +41,10 @@ class NaiveErrorModel():
         if size is None:
             size = self.tmax
         if mode == 'geom':
-            return scipy.stats.geom.rvs(1/mean_delay, size=size)
+            if mean_delay == 0:
+                return np.zeros(size)
+            else:
+                return scipy.stats.geom.rvs(1/mean_delay, size=size)
         else:
             raise Exception('Not implemented!')
 

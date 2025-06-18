@@ -1,21 +1,21 @@
 import numpy as np
 
 class SEIRParams:
-    def __init__(self, alpha, beta, gamma, init_inf_frac, init_rec_frac, tmax = None):
-        self.alpha = alpha
+    def __init__(self, beta, gamma, delta, init_inf_frac, init_rec_frac, tmax = None):
         self.beta = beta
         self.gamma = gamma
+        self.delta = delta
         self.init_inf_frac = init_inf_frac
         self.init_rec_frac = init_rec_frac
         self.tmax = tmax
         
     def __call__(self):
         params = self.as_list()
-        print('alpha: {}, beta: {}, gamma: {}, init_inf_frac: {}, init_rec_frac: {}'.format(*np.round(params, 2)))
+        print('beta: {}, gamma: {}, delta: {}, init_inf_frac: {}, init_rec_frac: {}'.format(*np.round(params, 2)))
         return params
     
     def as_list(self):
-        return [self.alpha, self.beta, self.gamma, self.init_inf_frac, self.init_rec_frac]
+        return [self.beta, self.gamma, self.delta, self.init_inf_frac, self.init_rec_frac]
         
         
         
