@@ -52,7 +52,7 @@ class SEIRModel():
         return: SEIRParams object
         '''
         tmax = len(time_series)
-        not_none_value_indices = [i for i, x in enumerate(time_series) if x is not np.nan]
+        not_nan_value_indices = [i for i, x in enumerate(time_series) if x is not np.nan]
         def AnnealingModel(x):
             beta, gamma, delta, init_inf_frac, init_rec_frac = x
             sim = self.simulate(beta=beta, gamma=gamma, delta=delta, 
@@ -62,8 +62,8 @@ class SEIRModel():
             daily_incidence_sim = sim.daily_incidence
             # VISUALISATION OF CALIBRATION
             # ax.plot(daily_incidence_sim, color='RoyalBlue', alpha=0.3)
-            return -r2_score(np.array(daily_incidence_sim)[not_none_value_indices], 
-                            np.array(time_series)[not_none_value_indices])
+            return -r2_score(np.array(daily_incidence_sim)[not_nan_value_indices], 
+                            np.array(time_series)[not_nan_value_indices])
             
         lw = [self.min_params.beta, self.min_params.gamma, self.min_params.delta, 
               self.min_params.init_inf_frac, self.min_params.init_rec_frac]

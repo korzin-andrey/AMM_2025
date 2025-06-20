@@ -16,7 +16,7 @@ class NaiveErrorModel():
         self.timespace = np.arange(self.tmax)
         self.mean_delay = mean_delay
         self.mean_underreporting = mean_underreporting
-        self.incidence_arr = time_series
+        self.daily_incidence = time_series
         self.error_mode = error_mode
         
         if error_mode == 'random':
@@ -58,24 +58,24 @@ class NaiveErrorModel():
 
     # ADDING ERROR TO THE INCIDENCE TIME SERIES
     def add_delay(self):
-        self.new_indices = [(self.timespace[index] + self.delay_arr[index]) for index in range(self.tmax)]
+        self.new_indices = [int(self.timespace[index] + self.delay_arr[index]) for index in range(self.tmax)]
         dict_incidence = dict()
         for index in range(len(self.new_indices)):
             if self.new_indices[index] in dict_incidence.keys():
                 dict_incidence[self.new_indices[index]
-                               ] += self.incidence_arr[index]
+                               ] += self.daily_incidence[index]
             elif self.new_indices[index] is not np.nan:
-                dict_incidence[self.new_indices[index]] = self.incidence_arr[index]
+                dict_incidence[self.new_indices[index]] = self.daily_incidence[index]
         dict_incidence = dict(sorted(dict_incidence.items()))
 
-        delayed_incidence = [np.nan for _ in range(max(self.new_indices)+1)]
+        delayed_incidence = [np.nan for _ in range(int(max(self.new_indices)+1))]
         for key in dict_incidence.keys():
             delayed_incidence[key] = dict_incidence[key]
         # assert sum(filter(np.nan, self.incidence_arr)) == sum(filter(np.nan, delayed_incidence))
-        self.incidence_arr = delayed_incidence
+        self.daily_incidence = delayed_incidence
 
     def add_underreporting(self):
-        self.incidence_arr = [self.incidence_arr[index] *
+        self.daily_incidence = [self.daily_incidence[index] *
                               self.underreporting_arr[index] for index in range(self.tmax)]
         
     
@@ -99,26 +99,45 @@ class NaiveErrorModel():
             raise Exception('Choose correct mode for error: "random" or "fixed".')
         
         
-        self.new_indices = [(self.timespace[index] - delay_arr[index]) if (self.timespace[index] >= delay_arr[index])
+        self.new_indices = [int(self.timespace[index] - delay_arr[index]) if (self.timespace[index] >= delay_arr[index])
                             else np.nan for index in range(self.tmax)]
 
         dict_incidence = dict()
         for index in range(self.tmax):
             if self.new_indices[index] in dict_incidence.keys():
                 dict_incidence[self.new_indices[index]
-                               ] += self.incidence_arr[index]
+                               ] += self.daily_incidence[index]
             elif self.new_indices[index] is not np.nan:
                 dict_incidence[self.new_indices[index]
-                               ] = self.incidence_arr[index]
+                               ] = self.daily_incidence[index]
         dict_incidence = dict(sorted(dict_incidence.items()))
 
         delayed_incidence = [np.nan for _ in range(self.tmax)]
         for key in dict_incidence.keys():
             delayed_incidence[key] = dict_incidence[key]
-        # does not work because all incidence data with time index > self.tmax is deleted
-        # assert sum(filter(np.nan, self.incidence_arr)) == sum(filter(np.nan, delayed_incidence))
-        self.incidence_arr = delayed_incidence
+        self.daily_incidence = delayed_incidence
 
     def add_noise(self):
         self.add_underreporting()
         self.add_delay()
+        self.calculate_weekly_incidence()
+        
+  
+    def pad_array_to_multiple_of_seven(self, arr):
+        '''
+        Auxiliary function used for padding array of daily data by zeroes for converting
+        to weekly data.
+        '''
+        current_size = len(arr)
+        new_size = (current_size + 6) // 7 * 7
+        padding_needed = new_size - current_size
+        padded_array = np.pad(arr, (0, padding_needed),
+                            mode='constant', constant_values=0)
+        return padded_array
+
+    def calculate_weekly_incidence(self):
+        '''
+        Calculates weekly newly infected cases using daily incidence data.
+        '''
+        daily_incidence_padded = self.pad_array_to_multiple_of_seven(self.daily_incidence)
+        self.weekly_incidence = np.nansum(daily_incidence_padded.reshape(-1, 7), axis=1)

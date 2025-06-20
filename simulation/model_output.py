@@ -62,7 +62,7 @@ class SEIRModelOutput:
         self.daily_incidence = [0 if index == 0 else ((self.E[index-1] - self.E[index]) -
         (self.S[index] - self.S[index-1])) for index in range(len(self.S))]
         daily_incidence_padded = self.pad_array_to_multiple_of_seven(self.daily_incidence)
-        self.weekly_incidence = daily_incidence_padded.reshape(-1, 7).sum(axis=1)
+        self.weekly_incidence = np.nansum(daily_incidence_padded.reshape(-1, 7), axis=1)
 
     def calculate_rt(self):
         '''
@@ -74,6 +74,6 @@ class SEIRModelOutput:
         self.rt_daily = [self.daily_incidence[index]/(new_recoveries[index]) if new_recoveries[index] != 0 else float('nan')
                 for index in range(len(self.daily_incidence))]
         daily_rt_padded = self.pad_array_to_multiple_of_seven(self.rt_daily)
-        self.weekly_rt = daily_rt_padded.reshape(-1, 7).sum(axis=1)
+        self.weekly_rt = np.nansum(daily_rt_padded.reshape(-1, 7), axis=1)
         
         
